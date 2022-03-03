@@ -2,9 +2,14 @@
 
 This project aims to classify MI tasks based on raw EEG data (no preprocessing).
 
-This is a rough implementation of the following article:
+First, run `create_image_data.m` to create image data. We run this just the first time to convert .mat data to image.
+
+Then, run `model.m`.
+
+*This is a rough implementation of the following article:*
 
 ===========================================================================
+
 AUTHOR=Lun Xiangmin, Yu Zhenglin, Chen Tao, Wang Fang, Hou Yimin
 	 
 TITLE=A Simplified CNN Classification Method for MI-EEG via the Electrode Pairs Signals  
