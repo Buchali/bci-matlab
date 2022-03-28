@@ -9,6 +9,7 @@ addpath(data_dir);
 file_name = 'BCIcomp2dataset3';
 load(file_name, 'X', 'y');
 fs = 128;
+
 %% clean data
 % temp/spatial filter: [3.25s to 6.25s] + remove Cz data
 
@@ -19,7 +20,7 @@ ind_split = find(y == min(y), 1, 'last');
 X = X(:, :, ind);
 
 %% save image data
-image_data_dir = fullfile(data_dir, 'image_data');
+image_data_dir = fullfile(data_dir, 'raw_image_data');
 
 % class 0
 % create a dir for class 0 images if not exist
