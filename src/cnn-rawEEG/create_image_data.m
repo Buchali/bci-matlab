@@ -12,7 +12,7 @@ fs = 128;
 %% clean data
 % temp/spatial filter: [3.25s to 6.25s] + remove Cz data
 
-X = X(floor(3.25 * fs) + 1 : floor(6.25 * fs), [1, 3] , :);
+X = X(floor(3.25 * fs) + 1 : floor(6.25 * fs), [1, 3], :);
 %% sort dataset based on their class: y = 0 or y = 1
 [y, ind] = sort(y);
 ind_split = find(y == min(y), 1, 'last');
