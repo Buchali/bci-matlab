@@ -39,7 +39,7 @@ ind_split = find(y == min(y), 1, 'last');
 img = img(:, :, ind);
 
 %% save image data
-image_data_dir = fullfile(data_dir, 'image_data');
+image_data_dir = fullfile(data_dir, 'stft_image_data');
 
 % class 0
 % create a dir for class 0 images if not exist
