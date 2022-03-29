@@ -1,6 +1,6 @@
 clc; close all;
 %% Params
-flag_create_images = flase;
+flag_create_images = false;
 
 %% Add dataset dir to Matlab path
 current_dir = pwd;
@@ -14,7 +14,6 @@ dataset_dir = fullfile(data_dir, 'raw_image_data');
 
 % check if the image dataset already exists.
 if (~isfolder(dataset_dir) || flag_create_images)
-disp('Need to create dataset')
 % Load MI data
 file_name = 'BCIcomp2dataset3';
 load(file_name, 'X', 'y');
