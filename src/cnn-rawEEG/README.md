@@ -2,9 +2,11 @@
 
 This project aims to classify MI tasks using CNN based on raw EEG data (no preprocessing).
 
-First, run `create_image_data.m` to create image data. Only run this the first time to convert .mat data to image data-store.
+## How to run?
 
-Then, run `model.m`.
+run `run.m`.
+
+## Reference
 
 *This is a rough implementation of the following article:*
 

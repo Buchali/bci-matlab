@@ -1,26 +1,23 @@
-
-%% Add dataset dir to Matlab path
-current_dir = pwd;
-src_dir = fileparts(pwd);
-data_dir = fullfile(src_dir, 'data/Graz_dataset');
-addpath(data_dir);
-
-%% Load MI data
-file_name = 'BCIcomp2dataset3';
-load(file_name, 'X', 'y');
+function signal2image(X, y, dataset_dir)
+% this function converts EEG signal to image data
+disp('imageDatastore creation...')
+%% params
 fs = 128;
+temporal_range = [3.25, 6.25];
+electrodes = [1, 3]; % Cz is not necessary
 
 %% clean data
 % temp/spatial filter: [3.25s to 6.25s] + remove Cz data
 
-X = X(floor(3.25 * fs) + 1 : floor(6.25 * fs), [1, 3], :);
+X = X(floor(temporal_range(1) * fs) + 1 : floor(temporal_range(2) * fs), electrodes, :);
+
 %% sort dataset based on their class: y = 0 or y = 1
 [y, ind] = sort(y);
 ind_split = find(y == min(y), 1, 'last');
 X = X(:, :, ind);
 
 %% save image data
-image_data_dir = fullfile(data_dir, 'raw_image_data');
+image_data_dir = dataset_dir;
 
 % class 0
 % create a dir for class 0 images if not exist
@@ -44,5 +41,4 @@ for i = ind_split + 1 : size(X,3)
     imwrite(X(:, :, i), [num2str(i), '.png'])
 end
 
-cd(current_dir)
-disp('image data created successfully!')
+disp('imageDatastore created successfully!')

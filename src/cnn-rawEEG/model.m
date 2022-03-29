@@ -1,23 +1,24 @@
-clc;
+function model(dataset_dir, num_folds, batch_ratio)
+
+disp('Loading the model...')
 %% load dateset as Datastore
-current_dir = pwd;
-src_dir = fileparts(pwd);
-dataset_dir = fullfile(src_dir, 'data/Graz_dataset/image_data');
 imgs = imageDatastore(dataset_dir, ...
         'IncludeSubfolders',true, ...
         'LabelSource','foldernames');
+
+%% params
+k = num_folds; % folds
+input_size = [size(readimage(imgs,1)), 1]; % [384, 2, 1]
+
+fold = floor(size(imgs.Labels,1) / k); % length of folds
+
+
+batch_size = round((size(imgs.Labels,1) - fold) * batch_ratio);
 
 %% shuffle data
 rng(9)
 shuffle_ind = randperm(size(imgs.Labels, 1));
 imgs = subset(imgs, shuffle_ind);
-
-%% params
-k = 10; % folds
-input_size = [size(readimage(imgs,1)), 1]; % [384, 2, 1]
-
-fold = floor(size(imgs.Labels,1) / k); % length of folds
-num_batch = round((size(imgs.Labels,1) - fold) /4);
 
 %% layers
 activation = leakyReluLayer;
@@ -67,13 +68,15 @@ options = trainingOptions('adam', ...
     'LearnRateDropFactor', 0.8, ...
     'LearnRateDropPeriod', 10, ...
     'MaxEpochs', 20, ...
-    'MiniBatchSize', num_batch, ...
+    'MiniBatchSize', batch_size, ...
     'InitialLearnRate', 1e-3, ...
-    'verbose', false,...
+    'verbose', false, ...
     'verboseFrequency', 50, ...
     'Plots', 'none');
 
 %% train and test
+disp('Train and Test process begins...')
+disp('----------------------------')
 accuracy = zeros(k, 1);
 for j = 1:k
     indtest= (j-1) * fold + 1 : j * fold; % test indices
