@@ -1,37 +1,33 @@
-%% Preview
-% This file:
-%           1. loads EEG data
-%           2. converts EEG data to stft images
-%           3. rescale stft images to (64 * 64)
-%           3. stores the stft images as imageDatastore.
+function preprocess(X, y, dataset_dir)
+% this function converts EEG signals (X) to image data using stft
+% the images will be stored in dataset_dir
 
-%% Add dataset dir to Matlab path
-current_dir = pwd;
-src_dir = fileparts(pwd);
-data_dir = fullfile(src_dir, 'data/Graz_dataset');
-addpath(data_dir);
-
-%% Load MI signals
-file_name = 'BCIcomp2dataset3';
-load(file_name, 'X', 'y');
+%% params
 fs = 128;
-
-
+temporal_range = [3.25, 6.25];
+freq_range = [5, 31];
 %% stft
 
 % temporal filter: [3.25s to 6.25s]
-X = X(floor(3.25 * fs) + 1 : floor(6.25 * fs), :, :);
+X = X(floor(temporal_range(1) * fs) + 1 : floor(temporal_range(2) * fs), :, :);
 
 for i = 1 : size(X, 3)
-        [tmp, f] = stft(X(:, :, i), fs, 'Window', hann(32, 'periodic'), ...
-            'OverlapLength', 25, 'FFTlength', 128);
-        ind_freq = (f>5 & f<31);
-        tmp = abs(tmp(ind_freq, :, :));
-        img(:, :, i) = reshape(permute(tmp, [1, 3, 2]), [], size(tmp, 2)); % 3D to 2D convert
+    [tmp, f] = stft(X(:, :, i), fs, 'Window', hann(32, 'periodic'), ...
+        'OverlapLength', 25, 'FFTlength', 128);
+    ind_freq = (f > freq_range(1) & f < freq_range(2));
+    tmp = abs(tmp(ind_freq, :, :));
+    img(:, :, i) = reshape(permute(tmp, [1, 3, 2]), [], size(tmp, 2)); % 3D to 2D convert
 end
 
-%% rescale
+%% normalize and rescale
+figure(1)
+imagesc(img(:, :, 1))
+
 img = imresize(img, [64, 64]);
+img = normalize2d(img);
+
+figure(2)
+imagesc(img(:, :, 1))
 
 %% sort dataset based on their class: y = 0 or y = 1
 [y, ind] = sort(y);
@@ -39,7 +35,7 @@ ind_split = find(y == min(y), 1, 'last');
 img = img(:, :, ind);
 
 %% save image data
-image_data_dir = fullfile(data_dir, 'stft_image_data');
+image_data_dir = dataset_dir;
 
 % class 0
 % create a dir for class 0 images if not exist
@@ -63,5 +59,13 @@ for i = ind_split + 1 : size(img,3)
     imwrite(img(:, :, i), [num2str(i), '.png'])
 end
 
-cd(current_dir)
-disp('image data are created successfully!')
+disp('image dataset is created successfully!')
+
+function B = normalize2d(A)
+
+A_2D(:, :, 1) = reshape(A, [size(A,1) * size(A,2) , size(A,3)]);
+A_mean = reshape(mean(A_2D), [1, size(mean(A_2D))]);
+A_std = reshape(std(A_2D), [1, size(std(A_2D))]);
+
+B = (A - A_mean) ./ A_std;
+B = fillmissing(B, 'constant', 0); % change NAN to 0
