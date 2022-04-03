@@ -16,18 +16,13 @@ for i = 1 : size(X, 3)
         'OverlapLength', 25, 'FFTlength', 128);
     ind_freq = (f > freq_range(1) & f < freq_range(2));
     tmp = abs(tmp(ind_freq, :, :));
-    img(:, :, i) = reshape(permute(tmp, [1, 3, 2]), [], size(tmp, 2)); % 3D to 2D convert
+    img(:, :, :, i) = reshape(permute(tmp, [1, 3, 2]), [], size(tmp, 2)); % 3D to 2D convert
 end
 
 %% normalize and rescale
-figure(1)
-imagesc(img(:, :, 1))
 
 img = imresize(img, [64, 64]);
 img = normalize2d(img);
-
-figure(2)
-imagesc(img(:, :, 1))
 
 %% sort dataset based on their class: y = 0 or y = 1
 [y, ind] = sort(y);
