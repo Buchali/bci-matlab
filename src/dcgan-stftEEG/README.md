@@ -2,9 +2,9 @@
 
 This project aims to classify MI tasks using Deep Convolutional Generative Adversial Network based on stft images of EEG signals.
 
-First, run `preprocess.m` to create image data. Only run this the first time to convert .mat data to imageDatastore.
+## How to run?
 
-Then, run `model.m`.
+run `run.m`.
 
 *This is a rough implementation of the following article:*
 
