@@ -1,17 +1,8 @@
-function model(dataset_dir, batch_size)
+function dcgan(imds, batch_size, num_generated, gendata_dir)
 
 % this function runs a DCGAN model on stft images of EEG signals.
 disp('Loading the model...')
-
-%% load dateset as Datastore
-imds = imageDatastore(dataset_dir, ...
-    'IncludeSubfolders',true, ...
-    'LabelSource','foldernames'); %
-
-% shuffle data
-rng(9)
-shuffle_ind = randperm(size(imds.Labels, 1));
-imds = subset(imds, shuffle_ind);
+current_dir = pwd;
 
 %% augmentation
 image_size = [32, 32, 1];
@@ -65,7 +56,7 @@ lgraphDiscriminator = layerGraph(layersDiscriminator);
 dlnetDiscriminator = dlnetwork(lgraphDiscriminator);
 
 %% Training options
-numEpochs = 50;
+numEpochs = 20;
 miniBatchSize = batch_size;
 
 learnRateGenerator = 0.0002;
@@ -89,6 +80,8 @@ figure
 iteration = 0;
 start = tic;
 
+disp('Model loaded!')
+disp('Starting the training...')
 % Loop over epochs.
 for i = 1:numEpochs
     disp(['Epoch #' , num2str(i)])
@@ -164,17 +157,26 @@ for i = 1:numEpochs
     end
 end
 
+disp('Training is done!')
 %% generate new images
-ZNew = randn(1,1,numLatentInputs,16,'single');
+ZNew = randn(1,1,numLatentInputs,num_generated,'single');
 dlZNew = dlarray(ZNew,'SSCB');
 
 dlXGeneratedNew = predict(dlnetGenerator,dlZNew);
 
-I = imtile(extractdata(dlXGeneratedNew));
-I = rescale(I);
-imagesc(I)
-title("Generated Images")
+XGenerated = extractdata(squeeze(dlXGeneratedNew));
+%% save image data
 
+if not(isfolder(gendata_dir))
+    mkdir(gendata_dir);
+end
+cd(gendata_dir);
+for i = 1 : size(XGenerated,3)
+    imwrite(XGenerated(:, :, i), ['g',num2str(i), '.png'])
+end
+
+cd(current_dir)
+disp('generated image dataset is created successfully!')
 %% gradient function
     function [gradientsGenerator, gradientsDiscriminator, stateGenerator] = ...
             modelGradients(dlnetGenerator, dlnetDiscriminator, dlX, dlZ)

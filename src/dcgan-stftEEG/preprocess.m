@@ -2,6 +2,7 @@ function preprocess(X, y, dataset_dir)
 % this function converts EEG signals (X) to image data using stft
 % the images will be stored in dataset_dir
 
+current_dir = pwd;
 %% params
 fs = 128;
 temporal_range = [3.25, 6.25];
@@ -20,6 +21,7 @@ for i = 1 : size(X, 3)
 end
 
 %% normalize and rescale
+img = imresize(img, [32, 32]);
 img = normalize2d(img);
 
 %% sort dataset based on their class: y = 0 or y = 1
@@ -38,7 +40,7 @@ if not(isfolder(class_0_dir))
 end
 cd(class_0_dir);
 for i = 1 : ind_split
-    imwrite(img(:, :, i), [num2str(i), '.png'])
+    imwrite(img(:, :, i), ['0' num2str(i), '.png'])
 end
 
 % class 1
@@ -48,10 +50,11 @@ if not(isfolder(class_1_dir))
     mkdir(class_1_dir);
 end
 cd(class_1_dir);
-for i = ind_split + 1 : size(img,3)
-    imwrite(img(:, :, i), [num2str(i), '.png'])
+for i =  1 : size(img,3) - ind_split
+    imwrite(img(:, :, i), ['1', num2str(i), '.png'])
 end
 
+cd(current_dir)
 disp('image dataset is created successfully!')
 
 function B = normalize2d(A)
