@@ -40,6 +40,7 @@ scale = 0.2;
 layersDiscriminator = [
     imageInputLayer([32 32 1],'Normalization','none','Name','in')
     convolution2dLayer(filterSize,numFilters,'Stride',2,'Padding',1,'Name','conv1')
+    batchNormalizationLayer('Name','bn1')
     leakyReluLayer(scale,'Name','lrelu1')
     convolution2dLayer(filterSize,2*numFilters,'Stride',2,'Padding',1,'Name','conv2')
     batchNormalizationLayer('Name','bn2')

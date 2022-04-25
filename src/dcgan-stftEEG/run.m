@@ -50,6 +50,10 @@ imds_train = imageDatastore(cat(1, imds0train.Files, imds1train.Files, imds_gen.
 imds_train.Labels = cat(1, imds0train.Labels, imds1train.Labels, imds_gen.Labels);
 imds_train = shuffle_ds(imds_train, random_seed);
 
+imds_test = imageDatastore(cat(1, imds0test.Files, imds1test.Files));
+imds_test.Labels = cat(1, imds0test.Labels, imds1test.Labels);
+imds_test = shuffle_ds(imds_test, random_seed);
+
 function imds_shuffled = shuffle_ds(imds, randseed)
 rng(randseed)
 shuffle_ind = randperm(size(imds.Labels, 1));
