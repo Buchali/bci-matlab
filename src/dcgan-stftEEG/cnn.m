@@ -4,10 +4,7 @@ input_size = size(readimage(imds_train,1));
 
 layers = [
     imageInputLayer([input_size, 1],'Normalization','zscore','Name','in')
-%     convolution2dLayer([input_size(1), 3],numFilters,'Stride',1,'Padding',1,'Name','conv1')
-%     batchNormalizationLayer('Name','bn1')
-%     tanhLayer('Name','tanh1')
-%     
+     
     convolution2dLayer([input_size(1), 3],num_filters,'Stride',1,'Padding',1,'Name','conv1')
     batchNormalizationLayer('Name','bn1')
     tanhLayer('Name','tanh1')
