@@ -1,7 +1,7 @@
 function dcgan(imds, batch_size, num_generated, gendata_dir, image_size)
 
 % this function runs a DCGAN model on stft images of EEG signals.
-disp('Loading the model...')
+disp('Loading the DCGAN model...')
 current_dir = pwd;
 
 %% augmentation
@@ -73,19 +73,18 @@ squaredGradientDecayFactor = 0.999;
 
 %% Training
 
-ZValidation = randn(1,1,numLatentInputs,16,'single');
-dlZValidation = dlarray(ZValidation,'SSCB');
+% ZValidation = randn(1,1,numLatentInputs,16,'single');
+% dlZValidation = dlarray(ZValidation,'SSCB');
 
 
 % figure
 iteration = 0;
 % start = tic;
 
-disp('Model loaded!')
-disp('Starting the training...')
+disp('Starting the DCGAN training...')
 % Loop over epochs.
 for i = 1:numEpochs
-    disp(['Epoch #' , num2str(i)])
+%     disp(['Epoch #' , num2str(i)])
     % Reset and shuffle datastore.
     reset(auimds);
     %     augimds = shuffle(augimds);
@@ -158,7 +157,7 @@ for i = 1:numEpochs
     end
 end
 
-disp('Training is done!')
+disp('DCGAN training is done!')
 %% generate new images
 ZNew = randn(1,1,numLatentInputs,num_generated,'single');
 dlZNew = dlarray(ZNew,'SSCB');
