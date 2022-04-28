@@ -1,11 +1,11 @@
-function dcgan(imds, batch_size, num_generated, gendata_dir)
+function dcgan(imds, batch_size, num_generated, gendata_dir, image_size)
 
 % this function runs a DCGAN model on stft images of EEG signals.
 disp('Loading the model...')
 current_dir = pwd;
 
 %% augmentation
-image_size = [32, 32, 1];
+image_size = [image_size, 1];
 auimds = augmentedImageDatastore(image_size, imds);
 auimds.MiniBatchSize = batch_size;
 
@@ -77,9 +77,9 @@ ZValidation = randn(1,1,numLatentInputs,16,'single');
 dlZValidation = dlarray(ZValidation,'SSCB');
 
 
-figure
+% figure
 iteration = 0;
-start = tic;
+% start = tic;
 
 disp('Model loaded!')
 disp('Starting the training...')
@@ -136,25 +136,25 @@ for i = 1:numEpochs
         
         % Every 100 iterations, display batch of generated images using the
         % held-out generator input.
-        if mod(iteration,20) == 0 || iteration == 1
-            
-            % Generate images using the held-out generator input.
-            dlXGeneratedValidation = predict(dlnetGenerator,dlZValidation);
-            
-            % Rescale the images in the range [0 1] and display the images.
-            I = imtile(extractdata(dlXGeneratedValidation));
-            I = rescale(I);
-            imagesc(I)
-            
-            % Update the title with training progress information.
-            D = duration(0,0,toc(start),'Format','hh:mm:ss');
-            title(...
-                "Epoch: " + i + ", " + ...
-                "Iteration: " + iteration + ", " + ...
-                "Elapsed: " + string(D))
-            
-            drawnow
-        end
+%         if mod(iteration,20) == 0 || iteration == 1
+%             
+%             % Generate images using the held-out generator input.
+%             dlXGeneratedValidation = predict(dlnetGenerator,dlZValidation);
+%             
+%             % Rescale the images in the range [0 1] and display the images.
+%             I = imtile(extractdata(dlXGeneratedValidation));
+%             I = rescale(I);
+%             imagesc(I)
+%             
+%             % Update the title with training progress information.
+%             D = duration(0,0,toc(start),'Format','hh:mm:ss');
+%             title(...
+%                 "Epoch: " + i + ", " + ...
+%                 "Iteration: " + iteration + ", " + ...
+%                 "Elapsed: " + string(D))
+%             
+%             drawnow
+%         end
     end
 end
 
